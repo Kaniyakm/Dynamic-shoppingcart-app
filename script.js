@@ -15,6 +15,19 @@ function updateTotalPrice(amount) {
   totalPriceSpan.textContent = totalPrice.toFixed(2);
 }
 
+// Function to recalculate total price based on all items
+function recalculateTotal() {
+  let newTotal = 0;
+  const items = document.querySelectorAll('.cart-item');
+  items.forEach(item => {
+    const price = parseFloat(item.dataset.price);
+    const quantity = parseInt(item.querySelector('.quantity-input').value);
+    newTotal += price * quantity;
+  });
+  totalPrice = newTotal;
+  totalPriceSpan.textContent = totalPrice.toFixed(2);
+}
+
  // addProduct: 
  function addProduct() {
   const name = productNameInput.value.trim();
@@ -35,6 +48,14 @@ function updateTotalPrice(amount) {
   const nameSpan = document.createElement('span');
   nameSpan.textContent = `${name} - `;
 
+  // Create quantity input
+  const quantityInput = document.createElement('input');
+  quantityInput.type = 'number';
+  quantityInput.min = '1';
+  quantityInput.value = '1';
+  quantityInput.classList.add('quantity-input');
+
+    // Create price display (subtotal)
   const priceSpan = document.createElement('span');
   priceSpan.textContent = `$${price.toFixed(2)}`;
 
@@ -50,10 +71,23 @@ function updateTotalPrice(amount) {
     itemCounter.textContent = itemCount; // Update counter display
   });
 
+  // Event: Change quantity
+  quantityInput.addEventListener('input', () => {
+    const quantity = parseInt(quantityInput.value);
+    if (isNaN(quantity) || quantity <= 0) {
+      li.remove(); // Remove invalid or zero quantity items
+      itemCount--;
+      itemCounter.textContent = itemCount;
+    }
+    recalculateTotal(); // Update total
+  });
+
   // Append elements to <li>
   li.appendChild(nameSpan);
   li.appendChild(priceSpan);
   li.appendChild(removeButton);
+  li.appendChild(quantityInput);
+
 
   // Append the new <li> to the cart list
   cart.appendChild(li);
@@ -62,6 +96,7 @@ function updateTotalPrice(amount) {
   updateTotalPrice(price);       // Add this product's price
   itemCount++;                   // Increase counter
   itemCounter.textContent = itemCount;
+  recalculateTotal();
 
   // Clear input fields
   productNameInput.value = '';
