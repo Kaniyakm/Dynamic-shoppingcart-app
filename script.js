@@ -3,10 +3,11 @@ const productPriceInput = document.getElementById('product-price');
 const addProductButton = document.getElementById('add-product');
 const cart = document.getElementById('cart');
 const totalPriceSpan = document.getElementById('total-price');
-const itemCounter = document.getElementById('item-counter');
-let itemCount = 0;
+const itemCounter = document.getElementById('item-counter'); // Add for counter
 
-let totalPrice = 0;
+// Variables to track totals
+let itemCount = 0;
+let totalPrice = 0; // Added track # of products
  
 // Function to update the total price
 function updateTotalPrice(amount) {
@@ -44,6 +45,7 @@ function updateTotalPrice(amount) {
     // Event listener to remove the product using .remove()
   removeButton.addEventListener('click', () => {
     li.remove(); // Removes this product from the DOM
+    updateTotalPrice(-price);    // Subtract this item's price
     itemCount--; // Decrease item count
     itemCounter.textContent = itemCount; // Update counter display
   });
@@ -56,9 +58,12 @@ function updateTotalPrice(amount) {
   // Append the new <li> to the cart list
   cart.appendChild(li);
 
-  // Update product count and clear inputs
-  itemCount++;
+  // Update totals
+  updateTotalPrice(price);       // Add this product's price
+  itemCount++;                   // Increase counter
   itemCounter.textContent = itemCount;
+
+  // Clear input fields
   productNameInput.value = '';
   productPriceInput.value = '';
 }
